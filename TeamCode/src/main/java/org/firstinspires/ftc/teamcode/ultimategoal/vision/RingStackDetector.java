@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.ultimategoal.vision;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -19,28 +20,28 @@ import org.openftc.easyopencv.OpenCvPipeline;
 @TeleOp
 public class RingStackDetector extends LinearOpMode
 {
-    OpenCvInternalCamera phoneCam;
     OpenCvCamera webcam;
-    SkystoneDeterminationPipeline pipeline;
+    StackDeterminationPipeline pipeline;
 
     @Override
     public void runOpMode()
     {
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
-        pipeline = new SkystoneDeterminationPipeline();
-        phoneCam.setPipeline(pipeline);
+        FtcDashboard.getInstance().startCameraStream(webcam, 0);
+        pipeline = new StackDeterminationPipeline();
+        webcam.setPipeline(pipeline);
 
         // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
         // out when the RC activity is in portrait. We do our actual image processing assuming
         // landscape orientation, though.
-        phoneCam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
+        webcam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
 
-        phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
             public void onOpened()
             {
-                phoneCam.startStreaming(320,240, OpenCvCameraRotation.SIDEWAYS_LEFT);
+                webcam.startStreaming(320,240, OpenCvCameraRotation.SIDEWAYS_LEFT);
             }
         });
 
@@ -57,10 +58,10 @@ public class RingStackDetector extends LinearOpMode
         }
     }
 
-    public static class SkystoneDeterminationPipeline extends OpenCvPipeline
+    public static class StackDeterminationPipeline extends OpenCvPipeline
     {
         /*
-         * An enum to define the skystone position
+         * An enum to define the ring position
          */
         public enum RingPosition
         {
